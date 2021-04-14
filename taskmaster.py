@@ -2,7 +2,7 @@
 """
 Created on Mon Jul 13 14:05:21 2020
 
-@author: Jack
+@author: Chuck
 """
 
 import pandas as pd
@@ -11,42 +11,32 @@ import seaborn as sns
 import matplotlib.pyplot as plt
 from collections import Counter
 
-df = pd.read_csv("TaskmasterWins_s10.csv")#,usecols=['Percent_wins','Sex','POC','Points_per_ep','Series'])
+##Read in data; data obtained from https://task.fandom.com/wiki/
+df = pd.read_csv("TaskmasterWins_s10.csv")
 df['Sex_text'] = ['Male' if x == 1 else 'Female' for x in df['Sex']]
-#df = df[df['Sex']=='Female']
-#formula = "Percent_wins ~ C(Sex)+POC"
-#formula = "Percent_wins ~ POC + Sex"
-formula = "Points_per_ep ~ POC + Sex_text"
-md = smf.ols(formula,data=df).fit()
-md = smf.mixedlm(formula,data=df,groups=df['Series']).fit()
-print(md.summary())
 
-#plt.figure(num=None, figsize=(16, 24), dpi=200, facecolor='w', edgecolor='k')
-sns.catplot(x='POC',y='Rank',data=df,kind='box',legend=False)
-sns.catplot(x='POC',y='Points_per_ep',hue='Sex_text',data=df,kind='box',legend=False)
-sns.catplot(x='POC',y='Percent_wins',hue='Sex_text',data=df,kind='box',legend=False)
-#sns.catplot(x='POC',y='Points_per_ep',data=df,kind='box',legend=False)
-plt.xticks([0,1],['White','Non-White'])
-plt.xlabel("Race")
-plt.ylabel("Percent episodes won")
-plt.title("Taskmaster Winners (Series 1 - 10)")
-#plt.savefig("out.png")
-plt.legend(loc='upper right')
+##Regression
+#Hypothesis 1: POCs earn fewer points per episode than white competitors
+formula_H1 = "Points_per_ep ~ POC + Sex_text"
+md_H1 = smf.ols(formula_H1,data=df).fit()
+print(md_H1.summary())
 
-df['Sex'].count("Male")
-Counter(df['POC'])
+#Hypothesis 2: POCs win fewer episodes than white competitors
+formula_H2 = "Percent_wins ~ POC + Sex_text"
+md_H2 = smf.ols(formula_H2,data=df).fit()
+print(md_H2.summary())
 
+#Hypothesis 2: POCs are ranked lower (1 = best, 5 = worst) than white competitors
+formula_H3 = "Rank ~ POC + Sex_text"
+md_H3 = smf.ols(formula_H3,data=df).fit()
+print(md_H3.summary())
 
-for x in set(df['Series']):
-    temp = df[df['Series']==x]
-    temp['rank'] = temp['Total_points'].rank(method='max')
-    print(temp)
-    
-    
-df[df['POC']==1]['Rank'].mean()
-df[df['POC']==0]['Rank'].mean()
+#Visualize results for each hypothesis
+for analysis,label in zip(['Rank','Points_per_ep','Percent_wins'],['Rank','Points per episode','Percent wins']):
+    sns.catplot(x='POC',y=analysis,data=df,kind='box',legend=False)
+    plt.xticks([0,1],['White','Non-White'])
+    plt.xlabel("Race")
+    plt.ylabel(label)
+    plt.title("Taskmaster Winners (Series 1 - 10)")
+    plt.legend(loc='upper right')
 
-pearsonr(df1[df1['tr_bin']=='g']['dist_from_50'],df1[df1['tr_bin']=='g']['embedding_score'])
-
-smf.ols("embedding_score ~ dist_from_50",data=df1[df1['tr_bin']=='g']).fit().summary()
-(-0.3106594461924802)**2
