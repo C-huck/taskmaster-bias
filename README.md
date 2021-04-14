@@ -24,13 +24,15 @@
 | 10 | White women |
 | 7 | Non-white contestants, of which 1 is a woman |
 
-Expected POC series win rate: 20% (1 in 5 per series)
-Observed POC win rate: 0%
+**Expected POC series win rate:** 20% (1 in 5 per series)
+
+**Observed POC win rate:** 0%
 
 ## Hypotheses, model
 
-H<sub>0</sub>: No difference in win rate, points-per-episode, or overall rank between white and non-white contestants
-H<sub>1</sub>: POCs are adjudicated worse across the board than their non-POC peers, irrespective of gender
+**H<sub>0</sub>:** No difference in win rate, points-per-episode, or overall rank between white and non-white contestants
+
+**H<sub>1</sub>:** POCs are adjudicated worse across the board than their non-POC peers, irrespective of gender
 
 Used an OLS with the following formula to predict points per episode based on POC/non-POC and perceived gender. 
 
@@ -38,7 +40,13 @@ Used an OLS with the following formula to predict points per episode based on PO
 "Points_per_ep ~ POC + Sex_text"
 ```
 
-## Results
+## Results, conclusion
+
+- Model insignificant (F(2,47) = 2.536, p = 0.09) with little coverage (R<sup>2</sup> = 0.097)
+- Main effect of POC observed (β = -1.2747, p = 0.015), but not perceived gender (β = 0.1713, p = 0.717)
+- White contestants were judged to be both good and bad at the game
+- POC contestants were never judged to be good at the game
+- On average, POC contestants were judged to be worse at the game than non-POC contestant
 
 ![Points per episode, sorted by white/non-white](https://github.com/C-huck/taskmaster-bias/blob/main/points_per_epi_s10.png)
 
